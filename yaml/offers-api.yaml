@@ -1,0 +1,71 @@
+openapi: 3.0.4
+info:
+  title: M-eOffers Sales API
+  description: |
+    API for qualifying and retrieving offers for Apple CS Sales.
+  version: 1.0.0
+  x-server-stub-package: com.pp.cs.sales.offers
+servers:
+  - url: /api/sales/offers/v1
+    description: Offers API base URL
+tags:
+  - name: offers
+    description: Qualify and retrieve offers
+paths:
+  /qualify/offers:
+    get:
+      tags:
+        - offers
+      summary: Get qualifying offers
+      description: Returns a list of qualifying offers for the given team code and channel.
+      operationId: qualifyOffers
+      parameters:
+        - name: teamCode
+          in: query
+          description: Team code for offer qualification
+          required: true
+          schema:
+            type: string
+        - name: channel
+          in: query
+          description: Channel for offer qualification
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QualifyingOffer'
+        '400':
+          description: Invalid request (e.g. missing teamCode or channel)
+        default:
+          description: Unexpected error
+components:
+  schemas:
+    QualifyingOffer:
+      type: object
+      description: A qualifying offer with pricing and discount details
+      properties:
+        offerCode:
+          type: string
+          description: Offer code
+        productCode:
+          type: string
+          description: Product code
+        basePrice:
+          type: number
+          format: double
+          description: Base price
+        calculatedPrice:
+          type: number
+          format: double
+          description: Calculated price
+        discountApplied:
+          type: number
+          format: double
+          description: Discount applied

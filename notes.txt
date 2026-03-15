@@ -1,0 +1,5 @@
+docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+  -i /local/yaml/offers-api.yaml \
+  -g spring \
+  -o /local/out \
+  -c /local/yaml/openapi-generator-config.yaml
