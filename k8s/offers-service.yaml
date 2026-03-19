@@ -1,0 +1,68 @@
+# CS Sales Offers Service - for local Minikube
+# Build: from repo root: docker build -t offers-service:latest -f M-eOffers/Dockerfile M-eOffers
+# Load: minikube image load offers-service:latest
+# Deploy: kubectl apply -f M-eOffers/k8s/offers-service.yaml
+# Requires: postgres (see M-eCatalog/k8s/postgres.yaml and README)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: offers-service
+  namespace: cs-sales
+  labels:
+    app: offers-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: offers-service
+  template:
+    metadata:
+      labels:
+        app: offers-service
+    spec:
+      containers:
+        - name: offers-service
+          image: offers-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9081
+          env:
+            - name: DB_URL
+              value: "jdbc:postgresql://postgres:5432/cs-sales-offers"
+            - name: DB_USERNAME
+              value: cs_sales_user
+            - name: DB_PASSWORD
+              value: cs_sales_user
+          readinessProbe:
+            tcpSocket:
+              port: 9081
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9081
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: offers-service
+  namespace: cs-sales
+  labels:
+    app: offers-service
+spec:
+  selector:
+    app: offers-service
+  ports:
+    - port: 9081
+      targetPort: 9081
+      name: http
+  type: ClusterIP
