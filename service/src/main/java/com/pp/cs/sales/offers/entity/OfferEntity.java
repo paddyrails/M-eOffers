@@ -26,9 +26,9 @@ public class OfferEntity {
     @Column(name = "channel", nullable = false)
     private AvailableChannels channel;
 
-//    @Column(name = "base_price", nullable = false)
-//    private  Double basePrice;
-//
+    @Column(name = "base_price", nullable = false)
+    private  Double basePrice;
+
 //    @Column(name = "calculated_price", nullable = false)
 //    private  Double calculatedPrice;
 //
